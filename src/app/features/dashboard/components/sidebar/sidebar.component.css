@@ -1,0 +1,399 @@
+:host {
+  display: block;
+  z-index: 10;
+}
+
+.sidebar {
+  width: 280px;
+  height: 100vh;
+  background: #1e293b;
+  color: #f8fafc;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 4px 0 10px rgba(0,0,0,0.3);
+  overflow: auto;
+}
+
+.sidebar-header {
+  padding: 25px 20px;
+  background: #0f172a;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo h2 {
+  margin: 0;
+  font-size: 1.1rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.version {
+  font-size: 0.7rem;
+  color: #64748b;
+  margin-top: 5px;
+}
+
+.sidebar-content {
+  padding: 20px;
+}
+
+.section {
+  margin-bottom: 25px;
+}
+
+.btn-upload {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: #3b82f6;
+  padding: 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.btn-upload:hover {
+  background: #2563eb;
+}
+
+input[type="file"] {
+  display: none;
+}
+
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-box input {
+  width: 100%;
+  padding: 10px 35px 10px 10px;
+  background: #334155;
+  border: 1px solid #475569;
+  border-radius: 6px;
+  color: white;
+  outline: none;
+}
+
+.search-box input:focus {
+  border-color: #3b82f6;
+}
+
+.clear-btn {
+  position: absolute;
+  right: 10px;
+  background: #475569;
+  border: none;
+  color: white;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  font-size: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stats-card {
+  display: flex;
+  background: #334155;
+  padding: 15px;
+  border-radius: 10px;
+  justify-content: space-around;
+}
+
+.stat-item {
+  text-align: center;
+}
+
+.stat-label {
+  display: block;
+  font-size: 0.65rem;
+  color: #94a3b8;
+  text-transform: uppercase;
+}
+
+.stat-value {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #3b82f6;
+}
+
+.route-tree {
+  padding: 10px;
+}
+
+.route-tree h3 {
+  font-size: 0.75rem;
+  color: #64748b;
+  margin-bottom: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.tree-list {
+  background: #0f172a;
+  padding: 12px;
+  border-radius: 8px;
+  max-height: 180px;
+  overflow-y: auto;
+  border: 1px solid #334155;
+}
+
+.tree-item {
+  font-size: 0.75rem;
+  color: #cbd5e1;
+  margin-bottom: 6px;
+  font-family: 'JetBrains Mono', monospace;
+  display: flex;
+  align-items: center;
+}
+
+.tree-symbol {
+  color: #475569;
+  margin-right: 6px;
+  font-weight: bold;
+}
+
+.legend h3 {
+  font-size: 0.8rem;
+  color: #94a3b8;
+  margin-bottom: 15px;
+  text-transform: uppercase;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.85rem;
+  margin-bottom: 12px;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+}
+
+.dot.component {
+  background: #3b82f6;
+  border-radius: 50%;
+}
+
+.dot.service {
+  background: #10b981;
+  border-radius: 2px;
+  transform: rotate(45deg);
+}
+
+.line {
+  width: 20px;
+  height: 0;
+}
+
+.line.contains {
+  border-top: 2px solid #3b82f6;
+}
+
+.line.routing {
+  border-top: 2px dashed #f43f5e;
+}
+
+.line.injection {
+  border-top: 2px dotted #10b981;
+}
+
+.sidebar-footer {
+  padding: 20px;
+  text-align: center;
+  border-top: 1px solid #334155;
+}
+
+.btn-export {
+  width: 100%;
+  padding: 10px;
+  background: transparent;
+  color: #94a3b8;
+  border: 1px solid #475569;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.8rem;
+  transition: all 0.2s;
+  margin-bottom: 10px;
+}
+
+.btn-export:hover {
+  background: #334155;
+  color: white;
+  border-color: #3b82f6;
+}
+
+.sidebar-footer p {
+  font-size: 0.65rem;
+  color: #64748b;
+  margin: 0;
+}
+
+.tree-container {
+  background: #0f172a;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #334155;
+  max-height: 250px;
+  overflow-y: auto;
+}
+
+.tree-node {
+  display: flex;
+  align-items: center;
+  padding: 4px 0;
+  height: 28px;
+  margin-left: 5px;
+  border-left: 1px solid #334155;
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-size: 0.8rem;
+  color: #cbd5e1;
+  transition: color 0.2s;
+}
+
+.tree-node:hover {
+  color: #3b82f6;
+}
+
+.tree-guide {
+  color: #475569;
+  margin-right: 8px;
+  font-weight: bold;
+}
+
+.route-path {
+  word-break: break-all;
+}
+
+.root-path {
+  font-weight: 600;
+  color: #3b82f6;
+}
+
+.tree-viewport {
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(71, 85, 105, 0.3);
+  border-radius: 12px;
+  padding: 8px 0;
+  max-height: 400px;
+  overflow-y: auto;
+  backdrop-filter: blur(4px);
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.badge {
+  background: #334155;
+  color: #94a3b8;
+  font-size: 0.6rem;
+  padding: 2px 8px;
+  border-radius: 10px;
+  text-transform: uppercase;
+}
+
+.tree-row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  margin: 2px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  border-left: 2px solid transparent;
+}
+
+.tree-row:hover {
+  background: rgba(59, 130, 246, 0.1);
+  border-left-color: #3b82f6;
+  transform: translateX(4px);
+}
+
+.tree-row.is-root {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.node-icon {
+  font-size: 0.9rem;
+  margin-right: 10px;
+  filter: grayscale(1) opacity(0.7);
+  transition: 0.2s;
+}
+
+.tree-row:hover .node-icon {
+  filter: grayscale(0) opacity(1);
+}
+
+.path-text {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 0.85rem;
+  font-weight: 400;
+  color: #cbd5e1;
+  letter-spacing: 0.3px;
+}
+
+.is-root .path-text {
+  font-weight: 600;
+  color: #f8fafc;
+}
+
+.connector {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0;
+  height: 0;
+  border-top: 4px solid transparent;
+  border-bottom: 4px solid transparent;
+  border-left: 6px solid #ffffff;
+  opacity: 0.6;
+  transition: all 0.2s ease;
+}
+
+.tree-row:hover .connector {
+  border-left-color: #3b82f6;
+  transform: translateY(-50%) scale(1.2);
+  opacity: 1;
+}
+
+.param-tag {
+  margin-left: auto;
+  font-size: 0.6rem;
+  color: #f43f5e;
+  border: 1px solid rgba(244, 63, 94, 0.3);
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: rgba(244, 63, 94, 0.1);
+  font-weight: bold;
+}
+
+.tree-viewport::-webkit-scrollbar {
+  width: 4px;
+}
+
+.tree-viewport::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 10px;
+}

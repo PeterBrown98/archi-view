@@ -1,0 +1,57 @@
+<div class="modal-overlay" (click)="close.emit()">
+  <div class="modal-card" [class.expanded]="isExpanded" (click)="$event.stopPropagation()">
+    
+    <div class="info-side">
+      <div class="popup-header">
+        <h4>{{data.label}}</h4>
+        <button class="close-btn" (click)="close.emit()">&times;</button>
+      </div>
+      
+      <div class="popup-body">
+        <span class="badge" [attr.data-type]="data.type">{{data.type}}</span>
+        
+        <div class="file-path-label">File Path</div>
+        <div class="file-path-value">{{data.filePath}}</div>
+        
+        <button class="btn-primary-action" (click)="toggleExpand()">
+          <i class="icon">{{ isExpanded ? '←' : '⟨/⟩' }}</i>
+          {{ isExpanded ? 'Show Info Only' : 'View Source Code' }}
+        </button>
+      </div>
+    </div>
+
+    <div class="code-side" *ngIf="isExpanded">
+      <div class="tabs">
+  <button 
+    *ngIf="data.tsContent && data.tsContent.trim().length > 0"
+    [class.active]="activeTab === 'ts'" 
+    (click)="setTab('ts')">
+    <span class="tab-icon ts">{{ data.type === 'Service' ? 'S' : 'TS' }}</span> 
+    {{ data.type === 'Service' ? 'service.ts' : 'component.ts' }}
+  </button>
+
+  <button 
+    *ngIf="data.htmlContent && data.htmlContent.trim().length > 0" 
+    [class.active]="activeTab === 'html'" 
+    (click)="setTab('html')">
+    <span class="tab-icon html">H</span> template.html
+  </button>
+</div>
+      
+      <div class="editor-container">
+        <ngx-monaco-editor 
+          *ngIf="activeTab === 'ts'"
+          [options]="editorOptions" 
+          [ngModel]="data.tsContent">
+        </ngx-monaco-editor>
+
+        <ngx-monaco-editor 
+          *ngIf="activeTab === 'html'"
+          [options]="editorOptions" 
+          [ngModel]="data.htmlContent">
+        </ngx-monaco-editor>
+      </div>
+    </div>
+
+  </div>
+</div>

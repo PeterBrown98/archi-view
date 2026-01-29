@@ -1,0 +1,81 @@
+<div class="sidebar">
+  <div class="sidebar-header">
+    <div class="logo">
+      <svg class="icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      <h2>NG-Navigator</h2>
+    </div>
+    <p class="version">v1.1.0</p>
+  </div>
+
+  <div class="sidebar-content">
+    <div class="section">
+      <label class="btn-upload">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>
+        Carica Progetto
+        <input type="file" (change)="onFileChange($event)" webkitdirectory directory multiple>
+      </label>
+    </div>
+
+    <div class="section search-box">
+      <div class="input-wrapper">
+        <input type="text" [value]="searchTerm" placeholder="Cerca nel progetto..." (input)="onSearch($event)">
+        <button *ngIf="searchTerm" (click)="clearSearch()" class="clear-btn">✕</button>
+      </div>
+    </div>
+
+    <div *ngIf="stats" class="section stats-card">
+      <div class="stat-item">
+        <span class="stat-label">Componenti</span>
+        <span class="stat-value">{{stats.componentsCount}}</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-label">Servizi</span>
+        <span class="stat-value">{{stats.servicesCount}}</span>
+      </div>
+    </div>
+    <div class="section legend">
+      <h3>Legenda</h3>
+      <div class="legend-item">
+        <span class="dot component"></span> Componenti
+      </div>
+      <div class="legend-item">
+        <span class="dot service"></span> Servizi
+      </div>
+      <div class="legend-item">
+        <span class="line contains"></span> Contains
+      </div>
+      <div class="legend-item">
+        <span class="line routing"></span> Route 
+      </div>
+      <div class="legend-item">
+        <span class="line injection"></span> Injection
+      </div>
+    </div>
+  </div>
+
+
+   <div class="section route-tree" *ngIf="routeTree && routeTree.length > 0">
+  <div class="section-header">
+    <h3>Project Sitemap</h3>
+    <span class="badge">{{routeTree.length}} routes</span>
+  </div>
+  
+  <div class="tree-viewport">
+    <div *ngFor="let route of routeTree" 
+         class="tree-row" 
+         [style.padding-left.px]="route.level * 20 + 5"
+         [class.is-root]="route.level === 0"
+         > <div class="connector" *ngIf="route.level > 0" [style.left.px]="route.level * 20 - 20"></div>
+      
+      <div class="node-content">
+        
+
+        <span class="path-text">{{ route.path }}</span>
+        
+        <span class="param-tag" *ngIf="route.path.includes(':')">param</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
