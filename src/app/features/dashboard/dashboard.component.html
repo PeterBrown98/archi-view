@@ -1,22 +1,25 @@
 <div class="dashboard-layout">
-  <app-sidebar 
-  (folderSelected)="handleAnalysis($event)" 
-  (searchKey)="currentSearch = $event" 
-  [routeTree]="currentRoutes"
-  [stats]="analysisStats">
-</app-sidebar>
-  
+  <app-sidebar
+    (folderSelected)="handleAnalysis($event)"
+    (searchKey)="currentSearch = $event"
+    [routeTree]="currentRoutes"
+    [stats]="analysisStats"
+  >
+  </app-sidebar>
+
   <div class="main-content">
-    <app-graph-viewer 
-  [elements]="graphElements"
-  [searchTerm]="currentSearch"
-  (nodeSelected)="onNodeSelected($event)">
-</app-graph-viewer>
-    
-    <app-info-modal 
-      *ngIf="selectedNode" 
-      [data]="selectedNode.data" 
-      (close)="selectedNode = null">
+    <app-graph-viewer
+      [elements]="graphElements"
+      [searchTerm]="currentSearch"
+      (nodeSelected)="onNodeSelected($event)"
+    >
+    </app-graph-viewer>
+
+    <app-info-modal
+      *ngIf="selectedNode"
+      [data]="selectedNode.data"
+      (close)="selectedNode = null"
+    >
     </app-info-modal>
   </div>
 </div>

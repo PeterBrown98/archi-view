@@ -1,8 +1,9 @@
-/* Overlay e Contenitore principale */
 .modal-overlay {
   position: fixed;
-  top: 0; left: 0;
-  width: 100vw; height: 100vh;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
   background: rgba(15, 23, 42, 0.6);
   backdrop-filter: blur(4px);
   display: flex;
@@ -15,10 +16,12 @@
   background: white;
   border-radius: 12px;
   display: flex;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  box-shadow:
+    0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04);
   overflow: hidden;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  width: 350px; /* Larghezza iniziale */
+  width: 350px;
   max-height: 90vh;
   animation: popupReveal 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
 }
@@ -28,7 +31,6 @@
   height: 90vh;
 }
 
-/* Lato Info (stile popup originale) */
 .info-side {
   width: 350px;
   flex-shrink: 0;
@@ -45,37 +47,68 @@
   align-items: center;
 }
 
-.popup-header h4 { margin: 0; color: #1e293b; font-size: 1.1rem; }
+.popup-header h4 {
+  margin: 0;
+  color: #1e293b;
+  font-size: 1.1rem;
+}
 
-.popup-body { padding: 20px; }
+.popup-body {
+  padding: 20px;
+}
 
 .badge {
   display: inline-block;
-  background: #3b82f6; color: white;
-  padding: 4px 10px; border-radius: 6px;
-  font-size: 0.75rem; font-weight: 600; text-transform: uppercase;
+  background: #3b82f6;
+  color: white;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
 }
 
-.file-path-label { margin-top: 20px; font-weight: 700; font-size: 0.75rem; color: #64748b; text-transform: uppercase; }
+.file-path-label {
+  margin-top: 20px;
+  font-weight: 700;
+  font-size: 0.75rem;
+  color: #64748b;
+  text-transform: uppercase;
+}
 
 .file-path-value {
-  margin-top: 8px; font-size: 0.8rem; color: #334155; 
-  background: #f8fafc; padding: 10px; border-radius: 8px;
-  border: 1px solid #e2e8f0; word-break: break-all;
-  font-family: 'Monaco', 'Consolas', monospace;
+  margin-top: 8px;
+  font-size: 0.8rem;
+  color: #334155;
+  background: #f8fafc;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  word-break: break-all;
+  font-family: "Monaco", "Consolas", monospace;
 }
 
 .btn-primary-action {
-  margin-top: 25px; width: 100%; padding: 12px;
-  background: #1e293b; color: white; border: none;
-  border-radius: 8px; cursor: pointer; font-weight: 600;
+  margin-top: 25px;
+  width: 100%;
+  padding: 12px;
+  background: #1e293b;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
   transition: background 0.2s;
-  display: flex; align-items: center; justify-content: center; gap: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
 }
 
-.btn-primary-action:hover { background: #334155; }
+.btn-primary-action:hover {
+  background: #334155;
+}
 
-/* Lato Codice (IDE Style) */
 .code-side {
   flex-grow: 1;
   display: flex;
@@ -93,19 +126,38 @@
 }
 
 .tabs button {
-  background: transparent; border: none; color: #94a3b8;
-  padding: 12px 20px; cursor: pointer; font-size: 0.85rem;
-  display: flex; align-items: center; gap: 8px;
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  padding: 12px 20px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
   border-bottom: 2px solid transparent;
 }
 
 .tabs button.active {
-  background: #1e1e1e; color: white; border-bottom: 2px solid #3b82f6;
+  background: #1e1e1e;
+  color: white;
+  border-bottom: 2px solid #3b82f6;
 }
 
-.tab-icon { font-size: 10px; font-weight: bold; padding: 2px 4px; border-radius: 3px; }
-.tab-icon.ts { background: #3178c6; color: white; }
-.tab-icon.html { background: #e34c26; color: white; }
+.tab-icon {
+  font-size: 10px;
+  font-weight: bold;
+  padding: 2px 4px;
+  border-radius: 3px;
+}
+.tab-icon.ts {
+  background: #3178c6;
+  color: white;
+}
+.tab-icon.html {
+  background: #e34c26;
+  color: white;
+}
 
 .editor-container {
   flex-grow: 1;
@@ -115,11 +167,20 @@
 
 ngx-monaco-editor {
   position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   height: auto !important;
 }
 
 @keyframes popupReveal {
-  from { opacity: 0; transform: scale(0.9); }
-  to { opacity: 1; transform: scale(1); }
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }

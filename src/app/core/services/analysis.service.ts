@@ -1,16 +1,16 @@
-import { Injectable } from '@angular/core';
-import * as ts from 'typescript';
-import { ElementDefinition } from 'cytoscape';
+import { Injectable } from "@angular/core";
+import * as ts from "typescript";
+import { ElementDefinition } from "cytoscape";
 import {
   RouteNode,
   ComponentInfo,
   ServiceInfo,
   AnalysisData,
   FlatRouteDisplay,
-} from '../models/analysis.model';
+} from "../models/analysis.model";
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: "root",
 })
 export class AnalysisService {
   private fileContents = new Map<string, string>();
@@ -22,23 +22,19 @@ export class AnalysisService {
 
   async performFullAnalysis(files: File[]): Promise<AnalysisData> {
     this.resetData();
-
     for (const file of files.filter(
-      (f) => f.name.endsWith('.ts') || f.name.endsWith('.html'),
+      (f) => f.name.endsWith(".ts") || f.name.endsWith(".html"),
     )) {
       const path = file.webkitRelativePath;
       this.fileContents.set(path, await file.text());
     }
-
     this.mapMetadata();
-
     const entryPath = Array.from(this.fileContents.keys()).find((p) =>
-      p.endsWith('app.routes.ts'),
+      p.endsWith("app.routes.ts"),
     );
     if (entryPath) {
       this.routeTree = this.analyzeFileRecursive(entryPath);
     }
-
     const elements = this.generateGraphElements();
 
     return {
@@ -58,18 +54,16 @@ export class AnalysisService {
 
   private mapMetadata() {
     this.fileContents.forEach((content, path) => {
-      if (!path.endsWith('.ts')) return;
+      if (!path.endsWith(".ts")) return;
       const classMatch = content.match(/class\s+([a-zA-Z0-9_]+)/);
       if (!classMatch) return;
-
       const className = classMatch[1];
-
       if (/@Component\s*\(/g.test(content)) {
         const selectorMatch = content.match(/selector:\s*['"]([^'"]+)['"]/);
         this.componentsMap.set(className, {
           className,
-          selector: selectorMatch ? selectorMatch[1] : '',
-          templatePath: path.replace('.ts', '.html'),
+          selector: selectorMatch ? selectorMatch[1] : "",
+          templatePath: path.replace(".ts", ".html"),
           tsPath: path,
         });
       } else if (/@Injectable\s*\(/g.test(content)) {
@@ -85,71 +79,66 @@ export class AnalysisService {
     const elements: ElementDefinition[] = [];
     const addedEdges = new Set<string>();
     const addedNodes = new Set<string>();
-
     this.componentsMap.forEach((info, name) => {
       elements.push({
         data: {
           id: name,
           label: name,
-          type: 'Component',
+          type: "Component",
           filePath: info.tsPath,
           selector: info.selector,
         },
       });
       addedNodes.add(name);
     });
-
     this.servicesMap.forEach((info, name) => {
       elements.push({
         data: {
           id: name,
           label: name,
-          type: 'Service',
+          type: "Service",
           filePath: info.filePath,
         },
       });
       addedNodes.add(name);
     });
-
     this.componentsMap.forEach((info, compName) => {
-      const tsContent = this.fileContents.get(info.tsPath) || '';
+      const tsContent = this.fileContents.get(info.tsPath) || "";
       this.servicesMap.forEach((servInfo, servName) => {
-        if (new RegExp(`[:\\s]${servName}[\\s,)]`, 'g').test(tsContent)) {
+        if (new RegExp(`[:\\s]${servName}[\\s,)]`, "g").test(tsContent)) {
           this.addEdge(
             elements,
             compName,
             servName,
-            '@injection',
-            'injection-edge',
+            "@injection",
+            "injection-edge",
             addedEdges,
           );
         }
       });
     });
-
     this.servicesMap.forEach((info, serviceName) => {
-      const tsContent = this.fileContents.get(info.filePath) || '';
+      const tsContent = this.fileContents.get(info.filePath) || "";
       this.servicesMap.forEach((otherServInfo, otherServName) => {
         if (serviceName === otherServName) return;
-        if (new RegExp(`[:\\s]${otherServName}[\\s,)]`, 'g').test(tsContent)) {
+        if (new RegExp(`[:\\s]${otherServName}[\\s,)]`, "g").test(tsContent)) {
           this.addEdge(
             elements,
             serviceName,
             otherServName,
-            '@injection',
-            'injection-edge',
+            "@injection",
+            "injection-edge",
             addedEdges,
           );
         }
       });
     });
-
     const processRoute = (
       node: RouteNode,
       lastComp?: string,
-      parentPath: string = '',
+      parentPath: string = "",
     ) => {
-      const currentPath = `${parentPath}/${node.path}`.replace(/\/+/g, '/');
+      const currentPath = `${parentPath}/${node.path}`.replace(/\/+/g, "/");
       if (node.component && lastComp && node.component !== lastComp) {
         if (addedNodes.has(lastComp) && addedNodes.has(node.component)) {
           this.addEdge(
@@ -157,7 +146,7 @@ export class AnalysisService {
             lastComp,
             node.component,
             `route ${currentPath}`,
-            'nav-edge',
+            "nav-edge",
             addedEdges,
           );
         }
@@ -166,26 +155,23 @@ export class AnalysisService {
       node.children.forEach((c) => processRoute(c, nextParent, currentPath));
     };
     this.routeTree.forEach((n) => processRoute(n));
-
     this.componentsMap.forEach((info, className) => {
-      const htmlContent = this.fileContents.get(info.templatePath) || '';
-      const tsContent = this.fileContents.get(info.tsPath) || '';
+      const htmlContent = this.fileContents.get(info.templatePath) || "";
+      const tsContent = this.fileContents.get(info.tsPath) || "";
       const combined = htmlContent + tsContent;
-
       this.componentsMap.forEach((other, otherName) => {
         if (className === otherName) return;
-        if (new RegExp(`<${other.selector}[\\s/>]`, 'i').test(combined)) {
+        if (new RegExp(`<${other.selector}[\\s/>]`, "i").test(combined)) {
           this.addEdge(
             elements,
             className,
             otherName,
-            'contains',
-            'contains-edge',
+            "contains",
+            "contains-edge",
             addedEdges,
           );
         }
       });
-
       this.parseNavigations(
         className,
         combined,
@@ -194,7 +180,6 @@ export class AnalysisService {
         addedEdges,
       );
     });
-
     return elements;
   }
 
@@ -215,11 +200,11 @@ export class AnalysisService {
           target,
           label,
           type:
-            cssClass === 'nav-edge'
-              ? 'Navigation'
-              : cssClass === 'injection-edge'
-                ? 'Injection'
-                : 'Containment',
+            cssClass === "nav-edge"
+              ? "Navigation"
+              : cssClass === "injection-edge"
+                ? "Injection"
+                : "Containment",
         },
         classes: cssClass,
       });
@@ -248,7 +233,7 @@ export class AnalysisService {
       );
 
       let segments: string[] = [];
-      if (rawValue.trim().startsWith('[')) {
+      if (rawValue.trim().startsWith("[")) {
         const internalQuotesPattern = /['"]([^'"]+)['"]/g;
         let internalMatch;
         while (
@@ -257,20 +242,20 @@ export class AnalysisService {
           segments.push(internalMatch[1]);
         }
       } else {
-        segments = rawValue.split('/').filter((s) => s.trim() !== '');
+        segments = rawValue.split("/").filter((s) => s.trim() !== "");
       }
 
       const cleanSegments = segments
-        .map((s) => s.replace(/^\//, '').trim())
-        .filter((s) => s !== '' && !s.includes('.') && !s.includes('('));
+        .map((s) => s.replace(/^\//, "").trim())
+        .filter((s) => s !== "" && !s.includes(".") && !s.includes("("));
       const target = this.matchRouteRecursive(this.routeTree, cleanSegments);
       if (target) {
         this.addEdge(
           elements,
           className,
           target,
-          `route /${cleanSegments.join('/')}`,
-          'nav-edge',
+          `route /${cleanSegments.join("/")}`,
+          "nav-edge",
           addedEdges,
         );
       }
@@ -283,39 +268,39 @@ export class AnalysisService {
       const rawTsValue = tsMatch[1];
       let tsSegments: string[] = [];
 
-      if (rawTsValue.startsWith('[')) {
-        const parts = rawTsValue.replace(/[\[\]]/g, '').split(',');
+      if (rawTsValue.startsWith("[")) {
+        const parts = rawTsValue.replace(/[\[\]]/g, "").split(",");
         parts.forEach((part) => {
           const trimmed = part.trim();
           if (trimmed.startsWith("'") || trimmed.startsWith('"')) {
-            const val = trimmed.replace(/['"]/g, '');
-            tsSegments.push(...val.split('/').filter((s) => s !== ''));
-          } else if (trimmed !== '') {
-            tsSegments.push(':dynamic');
+            const val = trimmed.replace(/['"]/g, "");
+            tsSegments.push(...val.split("/").filter((s) => s !== ""));
+          } else if (trimmed !== "") {
+            tsSegments.push(":dynamic");
           }
         });
       } else {
         tsSegments = rawTsValue
-          .replace(/['"]/g, '')
-          .split('/')
-          .filter((s) => s.trim() !== '');
+          .replace(/['"]/g, "")
+          .split("/")
+          .filter((s) => s.trim() !== "");
       }
 
       const cleanTsSegments = tsSegments
         .map((s) => s.trim())
-        .filter((s) => s !== '' && !s.includes('.') && !s.includes('('));
+        .filter((s) => s !== "" && !s.includes(".") && !s.includes("("));
       const tsTarget = this.matchRouteRecursive(
         this.routeTree,
         cleanTsSegments,
       );
       if (tsTarget) {
-        const pathLabel = `route /${cleanTsSegments.join('/').replace(':dynamic', ':param')}`;
+        const pathLabel = `route /${cleanTsSegments.join("/").replace(":dynamic", ":param")}`;
         this.addEdge(
           elements,
           className,
           tsTarget,
           pathLabel,
-          'nav-edge',
+          "nav-edge",
           addedEdges,
         );
       }
@@ -344,11 +329,11 @@ export class AnalysisService {
       if (ts.isObjectLiteralExpression(element)) {
         const props = element.properties;
         const pathProp = props.find(
-          (p) => p.name?.getText() === 'path',
+          (p) => p.name?.getText() === "path",
         ) as ts.PropertyAssignment;
         if (pathProp) {
-          const rawPath = pathProp.initializer.getText().replace(/['"]/g, '');
-          const pathSegments = rawPath.split('/').filter((s) => s !== '');
+          const rawPath = pathProp.initializer.getText().replace(/['"]/g, "");
+          const pathSegments = rawPath.split("/").filter((s) => s !== "");
 
           if (pathSegments.length > 1) {
             let currentChildren = nodes;
@@ -379,10 +364,10 @@ export class AnalysisService {
     filePath: string,
   ) {
     const compProp = props.find(
-      (p) => p.name?.getText() === 'component',
+      (p) => p.name?.getText() === "component",
     ) as ts.PropertyAssignment;
     const loadCompProp = props.find(
-      (p) => p.name?.getText() === 'loadComponent',
+      (p) => p.name?.getText() === "loadComponent",
     ) as ts.PropertyAssignment;
     if (compProp) node.component = compProp.initializer.getText();
     else if (loadCompProp) {
@@ -395,13 +380,13 @@ export class AnalysisService {
       }
     }
     const childrenProp = props.find(
-      (p) => p.name?.getText() === 'children',
+      (p) => p.name?.getText() === "children",
     ) as ts.PropertyAssignment;
     if (childrenProp && ts.isArrayLiteralExpression(childrenProp.initializer)) {
       node.children = this.parseRouteArray(childrenProp.initializer, filePath);
     }
     const loadChildrenProp = props.find(
-      (p) => p.name?.getText() === 'loadChildren',
+      (p) => p.name?.getText() === "loadChildren",
     ) as ts.PropertyAssignment;
     if (loadChildrenProp) {
       const importMatch = loadChildrenProp.initializer
@@ -416,9 +401,9 @@ export class AnalysisService {
 
   private getComponentNameFromFile(filePath: string): string {
     const content = this.fileContents.get(filePath);
-    if (!content) return 'Component';
+    if (!content) return "Component";
     const match = content.match(/class\s+([a-zA-Z0-9_]+)/);
-    return match ? match[1] : 'Component';
+    return match ? match[1] : "Component";
   }
 
   private findRouteArray(node: ts.Node): ts.ArrayLiteralExpression | undefined {
@@ -430,23 +415,23 @@ export class AnalysisService {
     currentFile: string,
     relativeImport: string,
   ): string {
-    const lastSlashIndex = currentFile.lastIndexOf('/');
+    const lastSlashIndex = currentFile.lastIndexOf("/");
     const currentDir =
-      lastSlashIndex !== -1 ? currentFile.substring(0, lastSlashIndex) : '';
-    const parts = currentDir.split('/').filter((p) => p !== '');
-    const relParts = relativeImport.split('/').filter((p) => p !== '');
+      lastSlashIndex !== -1 ? currentFile.substring(0, lastSlashIndex) : "";
+    const parts = currentDir.split("/").filter((p) => p !== "");
+    const relParts = relativeImport.split("/").filter((p) => p !== "");
     for (const part of relParts) {
-      if (part === '.') continue;
-      if (part === '..') parts.pop();
+      if (part === ".") continue;
+      if (part === "..") parts.pop();
       else parts.push(part);
     }
-    const targetBase = parts.join('/');
+    const targetBase = parts.join("/");
     return (
       Array.from(this.fileContents.keys()).find(
         (k) =>
           k.startsWith(targetBase) &&
-          (k.endsWith('.ts') || k.endsWith('.routes.ts')),
-      ) || ''
+          (k.endsWith(".ts") || k.endsWith(".routes.ts")),
+      ) || ""
     );
   }
 
@@ -464,7 +449,7 @@ export class AnalysisService {
       return undefined;
     }
     for (const route of routes) {
-      const routeSegments = route.path.split('/').filter((s) => s !== '');
+      const routeSegments = route.path.split("/").filter((s) => s !== "");
       if (routeSegments.length === 0) {
         const wrapperRes = this.matchRouteRecursive(
           route.children,
@@ -480,7 +465,7 @@ export class AnalysisService {
           const rSeg = routeSegments[i];
           const nSeg = segments[i];
           const segmentMatch =
-            rSeg === nSeg || rSeg.startsWith(':') || nSeg === ':dynamic';
+            rSeg === nSeg || rSeg.startsWith(":") || nSeg === ":dynamic";
           if (!segmentMatch) {
             isMatch = false;
             break;
@@ -506,82 +491,57 @@ export class AnalysisService {
   }
 
   getSourceCode(className: string): { ts: string; html: string } {
-    console.log('getSourceCode:', className);
-
-    // 1. Prova a cercarlo tra i componenti
     const compInfo = this.componentsMap.get(className);
     if (compInfo) {
       return {
         ts:
-          this.fileContents.get(compInfo.tsPath) || '// Codice TS non trovato',
-        html: this.fileContents.get(compInfo.templatePath) || '',
+          this.fileContents.get(compInfo.tsPath) || "// Codice TS non trovato",
+        html: this.fileContents.get(compInfo.templatePath) || "",
       };
     }
-
-    // 2. Se non è un componente, prova tra i servizi
     const servInfo = this.servicesMap.get(className);
     if (servInfo) {
       return {
         ts:
           this.fileContents.get(servInfo.filePath) ||
-          '// Codice Service non trovato',
-        html: '', // I servizi non hanno HTML
+          "// Codice Service non trovato",
+        html: "",
       };
     }
-
-    // 3. Fallback se non trova nulla
-    return { ts: '', html: '' };
+    return { ts: "", html: "" };
   }
 
   generateReport(): string {
     let report = `# Architecture Report - ${new Date().toLocaleDateString()}\n\n`;
-
     report += `## Summary\n`;
     report += `- Components: ${this.componentsMap.size}\n`;
     report += `- Services: ${this.servicesMap.size}\n\n`;
-
     report += `## Components List\n`;
     this.componentsMap.forEach((comp) => {
       report += `### ${comp.className}\n`;
       report += `- Selector: \`${comp.selector}\`\n`;
       report += `- Path: \`${comp.tsPath}\`\n\n`;
     });
-
     report += `## Services List\n`;
     this.servicesMap.forEach((serv) => {
       report += `### ${serv.className}\n`;
       report += `- Path: \`${serv.filePath}\`\n\n`;
     });
-
     return report;
   }
 
-
-  /**
- * Trasforma il RouteTree in una lista piatta che preserva 
- * la gerarchia logica tramite il livello (depth).
- */
-getFlattenedRoutes(): FlatRouteDisplay[] {
-  const flattened: FlatRouteDisplay[] = [];
-
-  const traverse = (node: RouteNode, level: number) => {
-    // Aggiungiamo il nodo corrente con il suo livello
-    // Se il path è vuoto, mostriamo uno slash o "index" per chiarezza
-    flattened.push({
-      path: node.path === '' ? '/' : node.path,
-      level: level
-    });
-
-    // Se ha dei figli, scendiamo ricorsivamente aumentando il livello
-    if (node.children && node.children.length > 0) {
-      node.children.forEach(child => traverse(child, level + 1));
-    }
-  };
-
-  // Partiamo dalla radice (livello 0)
-  this.routeTree.forEach(rootNode => traverse(rootNode, 0));
-  
-  return flattened;
-}
-
+  getFlattenedRoutes(): FlatRouteDisplay[] {
+    const flattened: FlatRouteDisplay[] = [];
+    const traverse = (node: RouteNode, level: number) => {
+      flattened.push({
+        path: node.path === "" ? "/" : node.path,
+        level: level,
+      });
+      if (node.children && node.children.length > 0) {
+        node.children.forEach((child) => traverse(child, level + 1));
+      }
+    };
+    this.routeTree.forEach((rootNode) => traverse(rootNode, 0));
+    return flattened;
+  }
 }

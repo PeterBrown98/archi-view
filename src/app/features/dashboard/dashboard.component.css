@@ -3,7 +3,7 @@
   width: 100vw;
   height: 100vh;
   overflow: hidden;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .main-content {
@@ -12,14 +12,13 @@
   background-color: #f0f2f5;
 }
 
-/* Info Popup / Modal */
 .info-popup {
   transform: translate(-50%, -50%);
   position: absolute;
   background: white;
   border-radius: 12px;
   padding: 0;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
   z-index: 1000;
   min-width: 250px;
   max-width: 350px;
@@ -37,31 +36,53 @@
   border-radius: 12px 12px 0 0;
 }
 
-.popup-header h4 { margin: 0; color: #2c3e50; }
+.popup-header h4 {
+  margin: 0;
+  color: #2c3e50;
+}
 
 .close-btn {
-  background: none; border: none; font-size: 20px; cursor: pointer; color: #95a5a6;
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: #95a5a6;
 }
 
-.popup-body { padding: 15px; }
+.popup-body {
+  padding: 15px;
+}
 
 .badge {
-  background: #3498db; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.8em;
+  background: #3498db;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.8em;
 }
 
-.file-path-label { margin-top: 10px; font-weight: bold; font-size: 0.8em; color: #7f8c8d; }
+.file-path-label {
+  margin-top: 10px;
+  font-weight: bold;
+  font-size: 0.8em;
+  color: #7f8c8d;
+}
 
 .file-path-value {
-  font-size: 11px; color: #34495e; word-break: break-all;
-  background: #f8f9fa; padding: 5px; border-radius: 4px;
+  font-size: 11px;
+  color: #34495e;
+  word-break: break-all;
+  background: #f8f9fa;
+  padding: 5px;
+  border-radius: 4px;
 }
 @keyframes popupReveal {
   from {
     opacity: 0;
-    transform: translate(-50%, -50%) scale(0.5); /* Parte piccolo ma già centrato */
+    transform: translate(-50%, -50%) scale(0.5);
   }
   to {
     opacity: 1;
-    transform: translate(-50%, -50%) scale(1);   /* Arriva a dimensione piena */
+    transform: translate(-50%, -50%) scale(1);
   }
 }

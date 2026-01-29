@@ -1,4 +1,4 @@
-import { ElementDefinition } from 'cytoscape';
+import { ElementDefinition } from "cytoscape";
 
 export interface RouteNode {
   path: string;
@@ -21,7 +21,6 @@ export interface ServiceInfo {
   filePath: string;
 }
 
-// Questo rappresenta il risultato finale dell'analisi
 export interface AnalysisData {
   elements: ElementDefinition[];
   components: Map<string, ComponentInfo>;
